@@ -1,6 +1,8 @@
 # Autosave files
 *~
 
+project.lock.json
+
 # build
 [Oo]bj/
 [Bb]in/
