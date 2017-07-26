@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using UIKit;
 using System.Drawing;
 using CoreGraphics;
 using Foundation;
 
-namespace Qoden.View
+namespace Qoden.UI
 {
 	public enum SlideLayoutLocation
 	{

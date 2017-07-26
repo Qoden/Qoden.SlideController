@@ -1,7 +1,7 @@
 ﻿using System;
 using UIKit;
 
-namespace Qoden.View
+namespace Qoden.UI
 {
 
 	public static class UIViewController_SlideMenu 
