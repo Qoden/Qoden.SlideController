@@ -11,6 +11,7 @@ namespace Qoden.UI
 		Left,
 		Right,
 		Center,
+        OverlayContent,
 		None
 	}
 
@@ -79,12 +80,13 @@ namespace Qoden.UI
 			{
 				left?.Dispose();
 				right?.Dispose();
+                dimOverlay?.Dispose();
 				content?.Dispose();
 			}
 			base.Dispose(disposing);
 		}
 
-		private UIView left, right, content;
+		private UIView left, right, content, dimOverlay;
 
 		[Outlet]
 		public UIView Left
@@ -115,6 +117,15 @@ namespace Qoden.UI
 				content = SetView(value, SlideLayoutLocation.Center);
 			}
 		}
+
+        public UIView DimOverlay
+        {
+            get { return dimOverlay; }
+            set
+            {
+                dimOverlay = SetView(value, SlideLayoutLocation.OverlayContent);
+            }
+        }
 
 		internal UIView SetView(UIView view, SlideLayoutLocation location)
 		{
@@ -154,6 +165,11 @@ namespace Qoden.UI
 				case SlideLayoutLocation.Center:
 					content = view;
 					break;
+                case SlideLayoutLocation.OverlayContent:
+                    dimOverlay = view;
+                    Add(dimOverlay);
+                    BringSubviewToFront(DimOverlay);
+                    break;
 			}
 
 			SetNeedsLayout();
@@ -227,6 +243,11 @@ namespace Qoden.UI
 				Content.Bounds = Bounds;
 				Content.Center = new CGPoint(Bounds.Width / 2, Bounds.Height / 2);
 			}
+            if(DimOverlay != null) 
+            {
+                DimOverlay.Bounds = Bounds;
+                DimOverlay.Center = new CGPoint(Bounds.Width / 2, Bounds.Height / 2);
+            }
 		}
 
 		private void LayoutForPaginate()
@@ -246,6 +267,11 @@ namespace Qoden.UI
 				Content.Bounds = Bounds;
 				Content.Center = new CGPoint(Bounds.Width / 2, Bounds.Height / 2);
 			}
+            if (DimOverlay != null)
+            {
+                DimOverlay.Bounds = Bounds;
+                DimOverlay.Center = new CGPoint(Bounds.Width / 2, Bounds.Height / 2);
+            };
 		}
 
 		private UITapGestureRecognizer tapGesture;
@@ -444,9 +470,11 @@ namespace Qoden.UI
 			{
 				case SlideTransitionStyle.Reveal:
 					Content.Transform = transform;
+                    DimOverlay.Transform = transform;
 					break;
 				case SlideTransitionStyle.Paginate:
 					Content.Transform = transform;
+                    DimOverlay.Transform = transform;
 					if (left != null)
 						left.Transform = transform;
 					if (right != null)
@@ -465,6 +493,8 @@ namespace Qoden.UI
 					return Right;
 				case SlideLayoutLocation.Center:
 					return Content;
+                case SlideLayoutLocation.OverlayContent:
+                    return DimOverlay;
 				case SlideLayoutLocation.None:
 				default:
 					return null;
@@ -479,6 +509,8 @@ namespace Qoden.UI
 				return SlideLayoutLocation.Right;
 			if (view == Content)
 				return SlideLayoutLocation.Center;
+            if (view == DimOverlay)
+                return SlideLayoutLocation.OverlayContent;
 			return SlideLayoutLocation.None;
 		}
 
@@ -522,7 +554,7 @@ namespace Qoden.UI
 		public event EventHandler<DisplaySlideViewEventArgs> WillPresentView;
 		public event EventHandler<DisplaySlideViewEventArgs> DidPresentView;
 
-		public void PresentView(SlideLayoutLocation location, bool animated = true)
+		public void PresentView(SlideLayoutLocation location, bool animated = true, bool dimBackground = true)
 		{
 			if (location == SlideLayoutLocation.Center)
 				throw new ArgumentException("location");
@@ -583,6 +615,9 @@ namespace Qoden.UI
 					}
 				}
 			};
+
+            DimOverlay.BackgroundColor = DimOverlay.BackgroundColor.ColorWithAlpha(dimBackground ? 0.4f : 0f);
+            InsertSubviewAbove(DimOverlay, Content);
 
 			if (animated)
 			{
@@ -648,6 +683,10 @@ namespace Qoden.UI
 					}
 				}
 			};
+
+            DimOverlay.BackgroundColor = DimOverlay.BackgroundColor.ColorWithAlpha(0f);
+            SendSubviewToBack(DimOverlay);
+
 			if (animated)
 			{
 				Animate(

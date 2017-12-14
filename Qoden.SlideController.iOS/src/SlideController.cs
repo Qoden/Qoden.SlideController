@@ -26,6 +26,9 @@ namespace Qoden.UI
 
 		public SlideController ()
 		{
+            var dimOverlay = new UIView() { BackgroundColor = UIColor.Black };
+            var controller = new UIViewController() { View = dimOverlay };
+            DimOverlayController = controller;
 		}
 
 		public SlideController (IntPtr handle) : base (handle)
@@ -34,7 +37,7 @@ namespace Qoden.UI
 			
 		public override void LoadView ()
 		{
-			var view = new SlideLayoutView ();
+            var view = new SlideLayoutView();
 			view.WillPresentView += WillPresentViewHandler;
 			view.DidPresentView += DidPresentViewHandler;
 			view.WillDismissView += WillDismissViewHandler;
@@ -139,6 +142,17 @@ namespace Qoden.UI
 			}
 		}
 
+        UIViewController dimOverlayController;
+
+        public UIViewController DimOverlayController
+        {
+            get { return dimOverlayController; }
+            set
+            {
+                dimOverlayController = SetController(value, SlideLayoutLocation.OverlayContent);
+            }
+        }
+
 		UIViewController SetController (UIViewController controller, SlideLayoutLocation location)
 		{
 			var view = LayoutView.GetViewForLocation(location);
@@ -154,10 +168,10 @@ namespace Qoden.UI
 			}
 			return controller;
 		}
-			
-		public void PresentMenu (SlideLayoutLocation location, bool animated = true)
+
+        public void PresentMenu(SlideLayoutLocation location, bool animated = true, bool dimBackground = true)
 		{
-			LayoutView.PresentView (location, animated);
+            LayoutView.PresentView (location, animated, dimBackground);
 		}
 
 		public void DismissMenu (bool animated = true)
