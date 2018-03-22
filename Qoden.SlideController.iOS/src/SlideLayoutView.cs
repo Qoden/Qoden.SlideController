@@ -617,6 +617,7 @@ namespace Qoden.UI
 			};
 
             DimOverlay.BackgroundColor = DimOverlay.BackgroundColor.ColorWithAlpha(dimBackground ? 0.4f : 0f);
+            DimOverlay.UserInteractionEnabled = false;
             InsertSubviewAbove(DimOverlay, Content);
 
 			if (animated)

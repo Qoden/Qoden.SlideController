@@ -188,6 +188,18 @@ namespace Qoden.UI
 				LayoutView.TapGestureRecognizer.Enabled = value;
 			}
 		}
+
+        public bool TapGestureEnabled
+        {
+            get
+            {
+                return LayoutView.TapGestureRecognizer.Enabled;
+            }
+            set
+            {
+                LayoutView.TapGestureRecognizer.Enabled = value;
+            }
+        }
 	}
 }
 
